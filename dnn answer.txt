@@ -1,0 +1,22 @@
+import tensorflow.keras
+import tensorflow as tf
+from tensorflow.keras import layers
+
+def create_model_architecture():
+    """
+    Design a Feed Forward Network using tensorflow keras as per the specifications provided in the image
+    Once you have added all the layers return the compiled version of model
+    Use adam optimizer, categorical cross entropy loss and accuracy as metrics for compiling the model
+    """
+    model = tf.keras.Sequential()
+    model.add(layers.Flatten())
+    model.add(layers.Dense(units=256, kernel_initializer='uniform', activation='relu', input_dim=784))
+    #model.add(layers.Flatten())
+    model.add(layers.Dense(units=128, kernel_initializer='uniform', activation='relu'))
+    
+    model.add(layers.Dense(units=128, kernel_initializer='uniform', activation='relu'))
+    #model.add(layers.Flatten())
+    model.add(layers.Dense(units=10, kernel_initializer='uniform', activation='softmax'))
+    model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+    
+    return model

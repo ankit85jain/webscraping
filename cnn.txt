@@ -1,0 +1,44 @@
+import tensorflow.keras
+import tensorflow as tf
+from tensorflow.keras import layers
+
+
+def create_model_architecture():
+    """
+    Design a CNN model using tensorflow keras as per the specifications provided in the image
+    Once you have added all the layers return the compiled version of model
+    Use sgd optimizer, categorical cross entropy loss and accuracy as metrics for compiling the model
+    """
+    model = tf.keras.Sequential()
+    model.add(layers.Conv2D(64, kernel_size=3, activation='relu', padding='same',input_shape=((224, 224, 3)),name='block1_conv1'))
+    model.add(layers.Conv2D(64, (3, 3), activation='relu', padding='same',name='block1_conv2'))
+    model.add(layers.MaxPooling2D(pool_size=(2, 2),name='block1_pool'))
+
+    model.add(layers.Conv2D(128, (3, 3), activation='relu', padding='same',name='block2_conv1'))
+    model.add(layers.Conv2D(128, (3, 3), activation='relu', padding='same',name='block2_conv2'))
+    model.add(layers.MaxPooling2D(pool_size=(2, 2),name='block2_pool'))
+    model.add(layers.Conv2D(256, (3, 3), activation='relu', padding='same',name='block3_conv1'))
+    model.add(layers.Conv2D(256, (3, 3), activation='relu', padding='same',name='block3_conv2'))
+    model.add(layers.MaxPooling2D(pool_size=(2, 2),name='block3_pool'))
+    model.add(layers.Conv2D(512, (3, 3), activation='relu', padding='same',name='block4_conv1'))
+    model.add(layers.Conv2D(512, (3, 3), activation='relu', padding='same',name='block4_conv2'))
+	model.add(layers.Conv2D(512, (3, 3), activation='relu', padding='same',name='block4_conv3'))
+    model.add(layers.MaxPooling2D(pool_size=(2, 2),name='block4_pool'))
+    model.add(layers.Conv2D(512, (3, 3), activation='relu', padding='same',name='block5_conv1'))
+    model.add(layers.Conv2D(512, (3, 3), activation='relu', padding='same',name='block5_conv2'))
+	model.add(layers.Conv2D(512, (3, 3), activation='relu', padding='same',name='block5_conv3'))
+    model.add(layers.MaxPooling2D(pool_size=(2, 2),name='block5_pool'))
+
+    model.add(layers.Flatten())
+    model.add(layers.Dense(units=4096, kernel_initializer='uniform',
+                           activation='relu', input_dim=784))
+    # model.add(layers.Flatten())
+    model.add(layers.Dense(
+        units=4096, kernel_initializer='uniform', activation='relu'))
+
+    model.add(layers.Dense(
+        units=1000, kernel_initializer='uniform', activation='softmax'))
+    model.compile(optimizer='sgd', loss='binary_crossentropy',
+                  metrics=['accuracy'])
+
+    return model

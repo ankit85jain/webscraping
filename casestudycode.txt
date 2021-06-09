@@ -1,0 +1,66 @@
+#Created on Wed Mar 20 18:46:25 2019
+
+#@author: Ankit
+
+
+
+import pandas as pd
+import numpy as np
+from bs4 import BeautifulSoup,NavigableString
+from urllib.request import urlopen
+from lxml import html
+import requests
+import re
+import datetime
+
+year=2009
+df=pd.DataFrame(columns=['Average temperature (°F)','Average humidity (%)','Average dewpoint (°F)','Average barometer (in)','Average windspeed (mph)','Average gustspeed (mph)','Average direction (°deg)','Rainfall for month (in)','Rainfall for year (in)','Maximum rain per minute','Maximum temperature (°F)','Minimum temperature (°F)','Maximum humidity (%)','Minimum humidity (%)','Maximum pressure','Minimum pressure','Maximum windspeed (mph)','Maximum gust speed (mph)','Maximum heat index (°F)'])
+
+while year<=2018:
+    month=1 
+    while month<=12:
+        monthStr="{:02d}".format(month)
+        print('http://www.estesparkweather.net/archive_reports.php?date='+str(year)+monthStr)
+        page=urlopen('http://www.estesparkweather.net/archive_reports.php?date='+str(year)+monthStr)
+        soup=BeautifulSoup(page,'html.parser')
+        #type(soup.find_all("table"))
+        #print(len(soup.find_all("table")))
+        day=1
+        for table in soup.find_all('table'):
+            rows=table.find_all('tr')
+            if len(rows)>0:
+                value=rows[0].find('td').string            
+                #print(type(value))
+                #print(isinstance(value,NavigableString))
+                rowVal=[]
+                if isinstance(value,NavigableString):
+                    if value.strip().endswith('Average and Extremes'):
+                        rowVal.append(float(rows[1].find_all('td')[1].string.split('°F')[0].strip()))
+                        rowVal.append(float(rows[2].find_all('td')[1].string.split('%')[0].strip()))
+                        rowVal.append(float(rows[3].find_all('td')[1].string.split('°F')[0].strip()))
+                        rowVal.append(float(rows[4].find_all('td')[1].string.split('in')[0].strip()))
+                        rowVal.append(float(rows[5].find_all('td')[1].string.split('mph')[0].strip()))
+                        rowVal.append(float(rows[6].find_all('td')[1].string.split('mph')[0].strip()))
+                        rowVal.append(float(rows[7].find_all('td')[1].string.split('°')[0].strip()))
+                        rowVal.append(float(rows[8].find_all('td')[1].string.split('in')[0].strip()))
+                        rowVal.append(float(rows[9].find_all('td')[1].string.split('in')[0].strip()))
+                        rowVal.append(float(rows[10].find_all('td')[1].string.split('in')[0].strip()))
+                        rowVal.append(float(rows[11].find_all('td')[1].string.split('°F')[0].strip()))
+                        rowVal.append(float(rows[12].find_all('td')[1].string.split('°F')[0].strip()))
+                        rowVal.append(float(rows[13].find_all('td')[1].string.split('%')[0].strip()))
+                        rowVal.append(float(rows[14].find_all('td')[1].string.split('%')[0].strip()))
+                        rowVal.append(float(rows[15].find_all('td')[1].string.split('in')[0].strip()))
+                        rowVal.append(float(rows[16].find_all('td')[1].string.split('in')[0].strip()))
+                        rowVal.append(float(rows[17].find_all('td')[1].string.split('mph')[0].strip()))
+                        rowVal.append(float(rows[18].find_all('td')[1].string.split('mph')[0].strip()))
+                        rowVal.append(float(rows[19].find_all('td')[1].string.split('°F')[0].strip()))
+                        dayStr="{:02d}".format(day)
+                        #print(datetime.datetime(year=year,month=month,day=day))
+                        #print(rowVal)
+                        datevar=str(year)+'-'+monthStr+'-'+dayStr
+                        df.loc[datevar]=rowVal
+                        day=day+1            
+        month=month+1
+    year=year+1  
+df.to_csv('C:\\Users\\Ankit\\Desktop\\bigdata\\python\\casestudydata.csv')
+print(df)
